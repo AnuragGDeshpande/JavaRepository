@@ -1,0 +1,42 @@
+//copy all consonants from file to another, if vowel is encountered throw exception
+
+import java.util.Scanner;
+import java.io.*;
+
+//main class
+public class Program {
+
+	static Scanner in = new Scanner(System.in);
+	//main method
+	public static void main(String args[]) throws IOException {
+		
+		try (BufferedReader buf = new BufferedReader(new FileReader("Alphabet.txt"))) {
+			try (BufferedWriter wrt = new BufferedWriter(new FileWriter("consonants.txt"))) {
+				String str = buf.readLine();
+				
+				for(int i=0; i<str.length(); i++) {
+					try {
+						if(str.charAt(i)=='a'||str.charAt(i)=='e'||str.charAt(i)=='i'||str.charAt(i)=='o'||str.charAt(i)=='u') 
+							throw new VowelNotAllowedException();
+						else {
+							wrt.write(str.charAt(i));
+						}
+					}catch(VowelNotAllowedException e) {
+						e.message(str.charAt(i));
+					}
+				}
+			}
+		}
+	}//End of main method
+	
+	
+}//End of main class
+
+
+//VowelNotAllowedException class
+class VowelNotAllowedException extends Exception{
+	
+	public void message(char st) {
+		System.out.println("Vowel encountered: " +st);
+	}
+}
