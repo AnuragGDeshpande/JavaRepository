@@ -1,0 +1,281 @@
+//Program to Sort 'n' numbers with 3 threads and combine to give the final sorted list
+
+import java.io.*;
+import java.util.*;
+//main class
+public class Program {
+
+	public static int t1f, t1l;
+	public static int t2f, t2l;
+	public static int t3f, t3l;
+	
+	public static ArrayList<Integer> alist1 = new ArrayList<Integer>();
+	public static ArrayList<Integer> alist2 = new ArrayList<Integer>();
+	public static ArrayList<Integer> alist3 = new ArrayList<Integer>();
+
+	public static ArrayList<Integer> sortedlist = new ArrayList<Integer>();
+	
+	static Scanner in = new Scanner(System.in);
+	//main method
+	public static void main(String args[]) throws IOException{
+		
+		try(BufferedReader buf = new BufferedReader(new FileReader("Integers.txt"))){
+			try(BufferedWriter wrt = new BufferedWriter(new FileWriter("SortedIntegers.txt"))){
+				
+				String str = buf.readLine();
+				String word[] = str.split(" ");
+				
+				ArrayList<Integer> arlist = new ArrayList<Integer>();
+				
+				for(int i=0; i<word.length;i++) {
+					arlist.add(Integer.parseInt(word[i]));
+				}
+				
+				//splitting into 3 sub arrays to be fed into threads
+				ArrayList<Integer> arlist1 = new ArrayList<Integer>();
+				ArrayList<Integer> arlist2 = new ArrayList<Integer>();
+				ArrayList<Integer> arlist3 = new ArrayList<Integer>();
+				
+				for(int i=0; i<(arlist.size()/3);i++) {
+					arlist1.add(arlist.get(i));
+				}
+				for(int i=(arlist.size()/3);i<(2*(arlist.size()/3));i++) {
+					arlist2.add(arlist.get(i));
+				}
+				for(int i=(2*(arlist.size()/3));i<(arlist.size());i++) {
+					arlist3.add(arlist.get(i));
+				}
+				
+				t1f = arlist1.get(0);
+				t1l = arlist1.get(arlist1.size()-1);
+				t2f = arlist2.get(0);
+				t2l = arlist2.get(arlist2.size()-1);
+				t3f = arlist3.get(0);
+				t3l = arlist3.get(arlist3.size()-1);
+				
+				//Creating threads
+				Thread_1 T1 = new Thread_1(arlist1);
+				Thread_2 T2 = new Thread_2(arlist2);
+				Thread_3 T3 = new Thread_3(arlist3);
+				
+				try {
+					T1.start();
+					T1.join();
+					T2.start();
+					T2.join();
+					T3.start();
+					T3.join();
+				}catch(Exception e) {
+					System.out.println("Error: " + e.toString());
+				}
+				
+				arlist1.addAll(arlist2);
+				arlist1.addAll(arlist3);
+				
+				Thread_4 T4 = new Thread_4(arlist1);
+				try {
+					T4.start();
+					T4.join();
+				}catch(Exception e) {
+					System.out.println("Error: " + e.toString());
+				}
+			}
+		}
+	}
+	
+	public static ArrayList<Integer> sortlist(ArrayList<Integer> arraylist) {
+	
+		/*Integer arr[] = new Integer[arraylist.size()];
+		int n = arr.length;
+		 
+        for (int i = 0; i < n-1; i++)
+        {
+            int min = i;
+            for (int j = i+1; j < n; j++)
+                if (arr[j] < arr[min])
+                    min = j;
+            int temp = arr[min];
+            arr[min] = arr[i];
+            arr[i] = temp;
+        }
+		ArrayList<Integer> arraylist1 = (ArrayList<Integer>) Arrays.asList(arr);
+        */
+		Collections.sort(arraylist);
+		return arraylist;
+	}	
+}
+
+class Thread_1 extends Thread {
+
+	public static ArrayList<Integer> alist11;
+	public static ArrayList<Integer> alist21;
+	
+	Thread_1(){
+
+	}
+	Thread_1(ArrayList<Integer> alist11){
+		this.alist11 = new ArrayList<>(List.copyOf(alist11));
+	}
+
+	public void run() {
+	    
+		alist21 = Program.sortlist(alist11);
+	}
+}
+
+class Thread_2 extends Thread {
+	
+	public static ArrayList<Integer> alist12;
+	public static ArrayList<Integer> alist22;
+	
+	Thread_2(){
+
+	}
+	Thread_2(ArrayList<Integer> alist12){
+		this.alist12 = new ArrayList<>(List.copyOf(alist12));
+	}
+	  public void run() {
+
+		  alist22 = Program.sortlist(alist12);
+	}
+}
+
+class Thread_3 extends Thread {
+
+	public static ArrayList<Integer> alist13;
+	public static ArrayList<Integer> alist23;
+	
+	Thread_3(){
+
+	}
+	Thread_3(ArrayList<Integer> alist13){
+		this.alist13 = new ArrayList<>(List.copyOf(alist13));
+	}
+
+	public void run() {
+	   
+		alist23 = Program.sortlist(alist13);
+	}
+}
+
+class Thread_4 extends Thread {
+
+	public static ArrayList<Integer> alist14;
+	public static ArrayList<Integer> alist24;
+	
+	Thread_4(){
+
+	}
+	Thread_4(ArrayList<Integer> alist13){
+		this.alist14 = new ArrayList<>(List.copyOf(alist14));
+	}
+
+	public void run() {
+	   
+		alist24 = Program.sortlist(alist14);
+		try {
+			try (BufferedWriter wt = new BufferedWriter(new FileWriter("SortedIntegers.txt"))) {
+				for(int i=0; i<alist24.size();i++) {
+					wt.write(alist24.indexOf(i) + " ");
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+/*
+ALTERNATE BELOW
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Scanner;
+
+class Question05 {
+    private static int arr[];
+
+    public static void main(String[] args) throws FileNotFoundException, InterruptedException, IOException {
+        File inputFile = new File("Integers.txt");
+
+        File outputFile = new File("SortedIntegers.txt");
+
+        FileWriter opWriter = new FileWriter(outputFile);
+
+        Scanner sc = new Scanner(inputFile);
+
+        int size = sc.nextInt();
+
+        arr = new int[size];
+        int i = 0;
+        while (sc.hasNext()) {
+
+            arr[i++] = sc.nextInt();
+        }
+        sc.close();
+
+        Thread T1 = new Thread() {
+            public void run() {
+                ThreadSorting(arr, 0, (size / 3) - 1);
+            }
+        };
+
+        Thread T2 = new Thread() {
+            public void run() {
+                ThreadSorting(arr, (size / 3), ((size / 3) * 2) - 1);
+            }
+        };
+
+        Thread T3 = new Thread() {
+            public void run() {
+                ThreadSorting(arr, ((size / 3) * 2), (size - 1));
+            }
+        };
+
+        Thread T4 = new Thread() {
+            public void run() {
+                ThreadSorting(arr, 0, size - 1);
+            }
+        };
+
+        T1.start();
+        T1.join();
+        T2.start();
+        T2.join();
+        T3.start();
+        T3.join();
+        T4.start();
+        T4.join();
+
+        for (int num : arr) {
+
+            opWriter.append(String.valueOf(num) + " ");
+        }
+        opWriter.close();
+
+    }
+
+    public static void ThreadSorting(int arr[], int start, int end) {
+        int tempArr[] = new int[end - start + 1];
+        int tempIndex = 0;
+        for (int i = start; i <= end; i++) {
+            tempArr[tempIndex++] = arr[i];
+        }
+        Arrays.sort(tempArr);
+        int index = start;
+
+        for (int n : tempArr) {
+            arr[index++] = n;
+        }
+
+
+    }
+}
+
+
+
+
+
+*/
