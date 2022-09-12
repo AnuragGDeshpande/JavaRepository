@@ -1,0 +1,65 @@
+//Java program to indicate if the number s prime or not and also check if its negative using user defined exceptions
+
+import java.util.Scanner;
+
+//main class
+public class Program {
+
+	static Scanner in = new Scanner(System.in);
+	static int n;
+	
+	//main method
+	public static void main(String args[]) {
+		
+		System.out.print("Enter the number to be checked: ");
+		n = in.nextInt();
+		
+		try{
+			if(n<=0) {
+				throw new NegativeNumberNotAllowedException();
+			}
+			if(isPrime(n) == false) {
+				throw new NumberNotPrimeException();
+			}
+			else {
+				System.out.println("The given number is a prime number");
+			}
+		}catch(NegativeNumberNotAllowedException e) {
+			e.message();
+		}catch(NumberNotPrimeException e) {
+			e.message();
+		}
+	}//End of main method
+	
+	static boolean isPrime(int num) {
+	    boolean flagp = false;
+	    for (int i = 2; i < num / 2; i++) {
+	      if (num % i == 0) {
+	        flagp = true;
+	        break;
+	      }
+	    }
+	    if (!flagp) {
+	      return true;
+	    } else {
+	      return false;
+	    }
+	  }
+
+}//End of main class
+
+//NegativeNumberNotAllowedException class
+class NegativeNumberNotAllowedException extends Exception{
+	
+	public void message() {
+		System.out.println("Sorry, negative numbers are not allowed");
+	}
+}//end of class
+
+//NumberNotPrimeException class
+class NumberNotPrimeException extends Exception{
+	
+	public void message() {
+		System.out.println("The Entered number is not a prime number");
+	}
+}//end of class
