@@ -1,0 +1,50 @@
+//Java program to search for a substring and to throw a user defined exception in case the substring is not found
+
+import java.util.Scanner;
+
+//main class
+public class Program {
+
+	static Scanner in = new Scanner(System.in);
+	//main method
+	public static void main(String args[]) {
+		
+		System.out.println("Enter the String to searched");
+		String str2 = in.nextLine();
+		String str1 = "SDMCET";
+	        int index = isSubstring(str1, str2);
+	 
+	        if (index == 0)
+	            System.out.println("The substring is not present");
+	        else
+	            System.out.println("The substring is present at index " + index);
+	}//End of main method
+	
+	static int isSubstring(String str1, String str2)
+	    {
+	        int l1 = str1.length();
+	        int l2 = str2.length();
+	 
+	        for (int i = 0; i <= l2 - l1; i++) {
+	            int j;
+
+	            for (j = 0; j < l1; j++) {
+	                if (str2.charAt(i + j) != str1.charAt(j))
+	                   break;
+	            }
+	            if (j == l1) {
+	                return i;
+	            }
+	        }
+	 
+	        return 0;
+	    }
+}//End of main class
+
+//SubStringNotFoundException
+class SubStringNotFoundException extends Exception{
+	
+	public void message() {
+		System.out.println("The required substring is not found in the given string");
+	}
+}//End of class
